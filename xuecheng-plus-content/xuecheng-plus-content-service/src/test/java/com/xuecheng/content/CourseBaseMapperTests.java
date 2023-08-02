@@ -21,7 +21,9 @@ class CourseBaseMapperTests {
     @Autowired
     CourseBaseMapper courseBaseMapper;
 
-
+    /**
+     * 测试 条件查询课程基本信息
+     */
     @Test
     void testCourseBaseMapper() {
         CourseBase courseBase = courseBaseMapper.selectById(74L);
@@ -60,5 +62,8 @@ class CourseBaseMapperTests {
         PageResult<CourseBase> courseBasePageResult = new PageResult<>(items, total, pageParams.getPageNo(), pageParams.getPageSize());
         System.out.println(courseBasePageResult);
     }
+
+
+
 
 }

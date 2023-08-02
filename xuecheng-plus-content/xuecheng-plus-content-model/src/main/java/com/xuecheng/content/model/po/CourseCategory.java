@@ -2,6 +2,7 @@ package com.xuecheng.content.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author itcast
  */
 @Data
+@ToString
 @TableName("course_category")
 public class CourseCategory implements Serializable {
 

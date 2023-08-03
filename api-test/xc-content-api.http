@@ -1,5 +1,5 @@
 
-###
+### 条件查询所有课程基本信息
 POST {{content_host}}/content/course/list?pageNo=1&pageSize=10
 Content-Type: application/json
 
@@ -8,3 +8,27 @@ Content-Type: application/json
   "courseName": "零基础"
 }
 
+
+
+### 添加新课程
+POST {{content_host}}/content/course
+Content-Type: application/json
+
+{
+  "charge": "201000",
+  "price": 0,
+  "originalPrice":0,
+  "qq": "测试qq号",
+  "wechat": "测试微信号",
+  "phone": "测试手机号",
+  "validDays": 365,
+  "name": "测试课程x",
+  "pic": "",
+  "mt": "",
+  "st": "1-1-1",
+  "teachmode": "200002",
+  "users": "大佬",
+  "tags": "测试标签",
+  "grade": "204001",
+  "description": "测试描述"
+}

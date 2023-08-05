@@ -60,6 +60,7 @@
             <result column="two_coursePubId"   property="coursePubId" />
             <result column="two_description" property="description" />
             <result column="two_status" property="status"/>
+            <result column="two_is_preview" property="isPreview"/>
 
             <association property="teachplanMedia" javaType="com.xuecheng.content.model.po.TeachplanMedia">
                 <result column="teachplanMeidaId"   property="id" />
@@ -98,6 +99,7 @@
             two.course_pub_id  two_coursePubId,
             two.description    two_description,
             two.status         two_status,
+            two.is_preview     two_is_preview,
 
             m1.media_fileName mediaFilename,
             m1.id teachplanMeidaId,

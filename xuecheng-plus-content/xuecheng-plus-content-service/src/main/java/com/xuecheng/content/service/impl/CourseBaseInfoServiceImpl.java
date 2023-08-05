@@ -5,25 +5,26 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
-import com.xuecheng.content.model.dto.AddCourseDto;
-import com.xuecheng.content.model.dto.CourseBaseInfoDto;
-import com.xuecheng.content.model.dto.EditCourseDto;
-import com.xuecheng.content.model.dto.QueryCourseParamsDto;
+import com.xuecheng.content.mapper.*;
+import com.xuecheng.content.model.dto.*;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
 import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.CourseTeacher;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.content.service.CourseTeacherService;
+import com.xuecheng.content.service.TeachplanService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
@@ -35,6 +36,16 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
     CourseCategoryMapper courseCategoryMapper;
     @Autowired
     CourseMarketMapper courseMarketMapper;
+    @Autowired
+    TeachplanService teachplanService;
+    @Autowired
+    TeachplanMapper teachplanMapper;
+    @Autowired
+    TeachplanMediaMapper teachplanMediaMapper;
+    @Autowired
+    CourseTeacherService courseTeacherService;
+    @Autowired
+    CourseTeacherMapper courseTeacherMapper;
 
     @Override
     public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
@@ -119,10 +130,10 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         // 向课程营销表保存课程营销信息
         CourseMarket courseMarketNew = new CourseMarket();
         Long courseId = courseBaseNew.getId();
-        BeanUtils.copyProperties(dto,courseMarketNew);
+        BeanUtils.copyProperties(dto, courseMarketNew);
         courseMarketNew.setId(courseId);
         int i = saveCourseMarket(courseMarketNew);
-        if(i<=0){
+        if (i <= 0) {
             throw new XueChengPlusException("保存课程营销信息失败");
         }
         // 查询课程基本信息及营销信息并返回
@@ -186,17 +197,17 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
         //课程id
         Long courseId = dto.getId();
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
-        if(courseBase==null){
+        if (courseBase == null) {
             XueChengPlusException.cast("课程不存在");
         }
 
         //校验本机构只能修改本机构的课程
-        if(!courseBase.getCompanyId().equals(companyId)){
+        if (!courseBase.getCompanyId().equals(companyId)) {
             XueChengPlusException.cast("本机构只能修改本机构的课程");
         }
 
         //封装基本信息的数据
-        BeanUtils.copyProperties(dto,courseBase);
+        BeanUtils.copyProperties(dto, courseBase);
         courseBase.setChangeDate(LocalDateTime.now());
 
         //更新课程基本信息
@@ -204,10 +215,45 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService {
 
         //封装营销信息的数据
         CourseMarket courseMarket = new CourseMarket();
-        BeanUtils.copyProperties(dto,courseMarket);
+        BeanUtils.copyProperties(dto, courseMarket);
         saveCourseMarket(courseMarket);
         //查询课程信息
         CourseBaseInfoDto courseBaseInfo = this.getCourseBaseInfo(courseId);
         return courseBaseInfo;
+    }
+
+    @Override
+    public void deleteCourse(Long courseId) {
+        // 查询章节信息树
+        List<TeachplanDto> teachplanTree = teachplanService.findTeachplanTree(courseId);
+        // 获取各级章节的id 和 所有媒资信息的id
+        List<Long> teachplanIds = new ArrayList<>();
+        List<Long> mediaIds = new ArrayList<>();
+        teachplanTree.forEach(x -> {
+            // 一级节点方案id
+            teachplanIds.add(x.getId());
+            x.getTeachPlanTreeNodes().forEach(y -> {
+                // 二级节点方案id
+                teachplanIds.add(y.getId());
+                // 二级节点绑定的媒资信息的id
+                mediaIds.add(y.getTeachplanMedia().getId());
+            });
+        });
+
+        // 批量删除节点和媒资信息
+        if (!CollectionUtils.isEmpty(teachplanIds)) {
+            teachplanMapper.deleteBatchIds(teachplanIds);
+        }
+        if (!CollectionUtils.isEmpty(mediaIds)) {
+            teachplanMediaMapper.deleteBatchIds(mediaIds);
+        }
+        // 删除所有教师信息
+        List<CourseTeacher> courseTeachers = courseTeacherService.listTeacherByCourseId(courseId);
+        List<Long> teacherIds = courseTeachers.stream().map(CourseTeacher::getId).collect(Collectors.toList());
+        if(!CollectionUtils.isEmpty(teacherIds)) {
+            courseTeacherMapper.deleteBatchIds(teacherIds);
+        }
+        // 最终删除该课程
+        courseBaseMapper.deleteById(courseId);
     }
 }

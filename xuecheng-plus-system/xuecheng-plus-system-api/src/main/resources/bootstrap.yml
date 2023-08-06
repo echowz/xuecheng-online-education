@@ -5,7 +5,14 @@ server:
 #微服务配置
 spring:
   application:
-    name: system-api
+    name: system-service
+  cloud:
+    nacos:
+      server-addr: 81.70.191.86:8848
+      discovery:
+        namespace: dev
+        group: xuecheng-plus-project
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://81.70.191.86:3306/xcplus_system?serverTimezone=UTC&userUnicode=true&useSSL=false&

@@ -89,3 +89,12 @@ Content-Type: application/json
 GET {{content_host}}/content/courseTeacher/list/85
 Content-Type: application/json
 
+### 上传文件
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="1.png"
+Content-Type: application/octet-stream
+
+< c:/Users/10077/Desktop/pic/lbxx.png

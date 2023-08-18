@@ -116,6 +116,7 @@ public class MediaFileServiceImpl implements MediaFileService {
      * @return void
      * @description 将文件写入minIO
      */
+    @Override
     public boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName) {
         try {
             UploadObjectArgs testbucket = UploadObjectArgs.builder()
@@ -429,4 +430,5 @@ public class MediaFileServiceImpl implements MediaFileService {
             log.error("清除分块文件失败,chunkFileFolderPath:{}", chunkFileFolderPath, e);
         }
     }
+
 }

@@ -1,8 +1,11 @@
 package com.xuecheng.content.service;
 
+import com.xuecheng.content.model.dto.BindTeachplanMediaDto;
 import com.xuecheng.content.model.dto.SaveTeachplanDto;
 import com.xuecheng.content.model.dto.TeachplanDto;
 import com.xuecheng.content.model.po.Teachplan;
+import com.xuecheng.content.model.po.TeachplanMedia;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -31,4 +34,11 @@ public interface TeachplanService {
      * @param upOrDown true为上移，false为下移
      */
     void teachplanMove(Long id, boolean upOrDown);
+
+    /**
+     * 教学计划绑定媒资
+     */
+    TeachplanMedia associationMedia(BindTeachplanMediaDto bindTeachplanMediaDto);
+
+    void deleteAssociation(String teachPlanId,String mediaId);
 }

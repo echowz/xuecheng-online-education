@@ -27,6 +27,7 @@ public interface MediaFileService {
     PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto);
 
     boolean addMediaFilesToMinIO(String localFilePath, String mimeType, String bucket, String objectName);
+
     @Transactional
     MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);
 
@@ -38,7 +39,7 @@ public interface MediaFileService {
      * @param localFilePath       文件磁盘路径
      * @return 文件信息
      */
-    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath, String objectName);
 
     /**
      * @param fileMd5 文件的md5
@@ -77,7 +78,8 @@ public interface MediaFileService {
 
     /**
      * 从minio下载文件
-     * @param bucket 桶
+     *
+     * @param bucket     桶
      * @param objectName 对象名称
      * @return 下载后的文件
      */

@@ -2,6 +2,8 @@
 ### 条件查询所有课程基本信息
 POST {{content_host}}/content/course/list?pageNo=1&pageSize=10
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2OTI2OTk1NzgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjZkODY1NDRkLWRlOGUtNDgwNS05Y2U5LTY1ZjgwNDE3ZTcwMSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.gxn6gAYrj61OokuTVXpghOUNhEuGs0TPskA0jQ5EqJo
+
 
 {
   "auditStatus": "",
@@ -37,6 +39,8 @@ Content-Type: application/json
 ### 根据课程id查询课程信息
 GET {{content_host}}/content/course/40
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2OTI2OTk1NzgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjZkODY1NDRkLWRlOGUtNDgwNS05Y2U5LTY1ZjgwNDE3ZTcwMSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.gxn6gAYrj61OokuTVXpghOUNhEuGs0TPskA0jQ5EqJo
+
 
 
 ### 修改课程
@@ -97,4 +101,23 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Content-Disposition: form-data; name="filedata"; filename="1.png"
 Content-Type: application/octet-stream
 
-< c:/Users/10077/Desktop/pic/lbxx.png
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=stu1&password=111111
+
+###校验jwt令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2OTI2OTk1NzgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjZkODY1NDRkLWRlOGUtNDgwNS05Y2U5LTY1ZjgwNDE3ZTcwMSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.gxn6gAYrj61OokuTVXpghOUNhEuGs0TPskA0jQ5EqJo
+
+
+### 通过网关访问资源服务
+GET http://localhost:63010/content/course/40
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2OTI2OTk1NzgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjZkODY1NDRkLWRlOGUtNDgwNS05Y2U5LTY1ZjgwNDE3ZTcwMSIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.gxn6gAYrj61OokuTVXpghOUNhEuGs0TPskA0jQ5EqJo
+
+
+### 申请验证码
+POST {{checkcode_host}}/checkcode/pic
+
+
+### 校验验证码
+POST {{checkcode_host}}/checkcode/verify?key=checkcode4506b95bddbe46cdb0d56810b747db1b&code=70dl
